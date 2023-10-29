@@ -1,0 +1,47 @@
+body {
+    background-color: antiquewhite;
+    text-align: center;
+    font-family: inherit;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.update-time {
+    padding: 6px;
+    border-radius: 6px;
+    background-color: rgb(red, green, blue);
+    color: white;
+}
+
+table {
+    width: 80%;
+    margin: 0 auto;
+}
+
+th {
+    background-color: rgba(255, 64, 64, 0.925);
+}
+
+td {
+    background-color: thistle;
+}
+
+td:nth-child(3) {
+    background-color: chartreuse;
+}
+
+@media(max-width:768) {
+    table {
+        width: 400px;
+    }
+}
+
+@media(max-width:400) {
+    table {
+        width: 300px;
+        font-size: 16px;
+    }
+}

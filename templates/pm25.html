@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- ../ 跳出本地目錄  ./ 本地目錄-->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <!-- <style>
+        body {
+            background-color: antiquewhite;
+            text-align: center;
+            font-family: inherit;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .update-time {
+            padding: 6px;
+            border-radius: 6px;
+            background-color: rgb(red, green, blue);
+            color: white;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        th {
+            background-color: rgba(255, 64, 64, 0.925);
+        }
+
+        td {
+            background-color: thistle;
+        }
+
+        td:nth-child(3) {
+            background-color: chartreuse;
+        }
+
+        @media(max-width:768) {
+            table {
+                width: 400px;
+            }
+        }
+
+        @media(max-width:400) {
+            table {
+                width: 300px;
+                font-size: 16px;
+            }
+        }
+    </style> -->
+</head>
+
+<body>
+    <h1>PM2.5即時資訊</h1>
+    <p>更新時間:{{now}}<span>{{message}}</span></p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                {% for column in columns %}
+                <th>{{column}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for value in values %}
+            <tr>
+                {% for row in value %}
+                <td>{{row}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {#{columns} {{values}}#}
+</body>
+
+</html>
