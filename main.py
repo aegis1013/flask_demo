@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 from datetime import datetime
 import pandas as pd
+import json
+
 
 # 可以任意定義名稱 >> app
 # 設定伺服器
@@ -66,6 +68,25 @@ def get_books(id):
     return "<h1>書籍編號不正確~</h1>"
 
 
+@app.route("/pm25-chart")
+def pm25_chart():
+    return render_template("pm25-chart.html")
+
+
+@app.route("/pm25-json")
+def get_pm25_json():
+    url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
+    df = pd.read_csv(url).dropna()
+
+    json_data = {
+        "title": "PM2.5數據",
+        "xData": df["site"].tolist(),
+        "yData": df["pm25"].tolist(),
+    }
+    # print(json_data)
+    return json.dumps(json_data, ensure_ascii=False)
+
+
 @app.route("/bmi/name=<name>&height=<h>&weight=<w>", methods=["GET"])
 def get_bmi(name, h, w):
     try:
@@ -115,3 +136,4 @@ def get_pm25():
 if __name__ == "__main__":
     ## debug=True >> 不用每次關閉終端機重起再刷新
     app.run(debug=True)
+    # get_pm25_json()
