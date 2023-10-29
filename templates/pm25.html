@@ -59,9 +59,17 @@
 </head>
 
 <body>
-    <h1>PM2.5即時資訊</h1>
-    <p>更新時間:{{now}}<span>{{message}}</span></p>
+    <h1 class="title">PM2.5即時資訊</h1>
+    <div class="update-time">更新時間:{{now}}<br><span>{{message}}</span></div>
 
+
+
+
+    <form action="/pm25" method="POST">
+        <input type="submit" name="update" value="更新"></input>
+        <input type="submit" name="sort" value="排序"></input>
+    </form>
+    <br>
     <table border="1">
         <thead>
             <tr>
@@ -82,5 +90,6 @@
     </table>
     {#{columns} {{values}}#}
 </body>
+
 
 </html>

@@ -9,11 +9,29 @@ body {
     font-weight: bold;
 }
 
+.highest,
+.lowest {
+    display: inline-block;
+    width: 50px;
+    margin-bottom: 16px;
+}
+
+.highest {
+    background-color: red;
+    color: white;
+}
+
+.lowest {
+    background-color: aqua;
+    color: white;
+}
+
 .update-time {
     padding: 6px;
     border-radius: 6px;
-    background-color: rgb(red, green, blue);
-    color: white;
+    background-color: rgb(187, 255, 132);
+    font-size: 24px;
+    color: rgb(0, 0, 0);
 }
 
 table {

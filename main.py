@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from datetime import datetime
 import pandas as pd
 
@@ -7,6 +7,8 @@ import pandas as pd
 app = Flask(__name__)
 # 將重複出現的函示丟於全域端
 books = {1: "Python book", 2: "Java book", 3: "Flask book"}
+
+ascending = True
 
 
 # 首頁 >> @app.route('/')
@@ -74,16 +76,35 @@ def get_bmi(name, h, w):
         return str(e)
 
 
-@app.route("/pm25")
+@app.route("/pm25", methods=["GET", "POST"])
 def get_pm25():
+    global ascending
     url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
     message = "取得資料成功!"
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sort = False
+    if request.method == "POST":
+        print(request.form)
+        if request.form.get("sort"):
+            sort = True
+    # print(sort)
+    # print(long)
+
     try:
         df = pd.read_csv(url).dropna()
+        if sort:
+            df = df.sort_values("pm25", ascending=ascending)
+            ascending = not ascending
+        else:
+            ascending = True
+
         columns = df.columns.tolist()
         values = df.values.tolist()
-        print(df)
+        # lowest = df.sort_values("pm25").iloc[0]["site", "pm25"].values
+        # highest = df.sort_values("pm25").iloc[-1]["site", "pm25"].values
+        # pm25 \\\65列 最高:{{highest[0]}} <span class="highest">{{highest[1]}}</span>
+        # 最低:{{lowest[0]}} <span class="lowest">{{lowest[1]}}</span>
+        print("取得資料成功!")
     except Exception as e:
         print(e)
         message = "取得pm2.5資料失敗，請稍後再試..."
