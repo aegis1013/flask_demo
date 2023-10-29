@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .price {
+            display: inline-block;
+            width: 200px;
+            padding: 6px;
+            color: white;
+            border-radius: 6px;
+            background-color: aqua;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>目前書籍內容</h1>
+    <ul>
+        {# 迴圈跑動 #}
+        {% for id in books %}
+        <div class="book">
+            {# 變數取值要加 >> {{}} #}
+            <li>{{id}} - {{books[id]["name"]}}
+                <p>價格:<b>{{books[id]["price"]}}</b></p>
+                <p>
+                    <img src="{{books[id]['image_url']}}" alt="">
+                </p>
+            </li>
+            {% endfor %}
+        </div>
+    </ul>
+    {# 字典語法 {{}} #}
+    {# {{books}} #}
+    {# 註解語法 #}
+
+</body>
+
+</html>
