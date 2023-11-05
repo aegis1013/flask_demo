@@ -86,7 +86,11 @@ def pm25_chart():
     # 最高最低輸出到pm25-chart.html
 
     return render_template(
-        "pm25-chart.html", countys=countys, lowest=lowest, highest=highest
+        "pm25-charts-bulma.html",
+        datetime=get_now(),
+        countys=countys,
+        lowest=lowest,
+        highest=highest,
     )
 
 

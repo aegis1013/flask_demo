@@ -8,6 +8,11 @@ selectCountyEl.addEventListener("change", () => {
     drawCountyPM25(selectCountyEl.value);
 });
 
+window.onresize = function () {
+    Chart1.resize();
+    Chart2.resize();
+    Chart3.resize();
+};
 
 //繪製圖形
 drawPM25();
@@ -183,6 +188,8 @@ function echartPic2(result) {
 }
 
 function drawPM25() {
+    Chart1.showLoading();
+    Chart2.showLoading();
     //ajax
     $.ajax(
         {
@@ -191,6 +198,8 @@ function drawPM25() {
             dataType: "json",
             // success:()=>
             success: (result) => {
+                Chart1.hideLoading();
+                Chart2.hideLoading();
                 console.log(result);
                 echartPic1(result);
                 echartPic(Chart1, result["title"], "PM2.5", result['xData'], result['yData']);
@@ -211,6 +220,7 @@ function drawPM25() {
 }
 
 function drawCountyPM25(county) {
+    Chart3.showLoading();
     //ajax
     $.ajax(
         {
@@ -219,6 +229,7 @@ function drawCountyPM25(county) {
             dataType: "json",
             // success:()=>
             success: (result) => {
+                Chart3.hideLoading();
                 if (!result['success']) {
                     county = county + "輸入不正確.."
                 }
