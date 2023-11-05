@@ -11,13 +11,14 @@ app = Flask(__name__)
 books = {1: "Python book", 2: "Java book", 3: "Flask book"}
 
 ascending = True
+df = None
 
 
 # 首頁 >> @app.route('/')
 @app.route("/")
 @app.route("/index")
 def index():
-    today = datetime.now()
+    today = get_now()
     print(today)
     return render_template("index.html", x=today)
     # 上方套用 flask render_template套件 從 x(前端)套用today到伺服端
@@ -68,13 +69,54 @@ def get_books(id):
     return "<h1>書籍編號不正確~</h1>"
 
 
+def get_now():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
 @app.route("/pm25-chart")
 def pm25_chart():
     return render_template("pm25-chart.html")
 
 
+@app.route("/county-pm25-json/<county>")
+def get_county_pm25_json(county):
+    global df
+    url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
+    pm25 = {}
+    message = ""
+    nowTime = datetime.now()
+    try:
+        if df is None:
+            # print("1") 測邏輯用
+            df = pd.read_csv(url).dropna()
+        pm25 = (
+            df.groupby("county")
+            .get_group(county)[["site", "pm25"]]
+            .set_index("site")
+            .to_dict()["pm25"]
+        )
+        success = True
+        message = "資料取得成功!"
+        nowTime = f"現在時間:{nowTime}"
+    except Exception as e:
+        print(e)
+        message = str(e)
+        success = False
+
+    json_data = {
+        "datetime": get_now(),
+        "success": success,
+        "title": county,
+        "pm25": pm25,
+        "message": message,
+        "nowTime": nowTime,
+    }
+    return json.dumps(json_data, ensure_ascii=False)
+
+
 @app.route("/pm25-json")
 def get_pm25_json():
+    global df
     six_countys = ["新北市", "臺北市", "桃園市", "臺中市", "臺南市", "高雄市"]
     url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
     df = pd.read_csv(url).dropna()

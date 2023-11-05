@@ -11,13 +11,16 @@
 
 <body>
     <h1>PM2.5數據圖</h1>
-    <div id="main" style="width: 600px;height:400px; background-color: rgb(110, 240, 245);"></div>
+    <div id="main" style="width: 600px;height:400px; background-color: rgb(255, 251, 31);"></div>
     <div id="six-county" style="width: 600px;height:400px; background-color: rgb(110, 240, 245);"></div>
+    <div id="county" style="width: 600px;height:400px; background-color: rgb(102, 243, 121);"></div>
     <!--  使用ajax進行資料取得後繪製 -->
     <script>
         const Chart1 = echarts.init(document.getElementById('main'))
         const Chart2 = echarts.init(document.getElementById('six-county'))
+        const Chart3 = echarts.init(document.getElementById('county'))
         drawPM25();
+
 
         function echartPic(chart, title, Label, xData, yData, color = "#00008b") {
             let option = {
@@ -189,7 +192,6 @@
             option && Chart1.setOption(option);
         }
 
-
         function drawPM25() {
             //ajax
             $.ajax(
@@ -200,13 +202,43 @@
                     // success:()=>
                     success: (result) => {
                         console.log(result);
-                        echartPic(Chart1, result["PM2.5"], "PM2.5", result['sixData'], result['sixData']);
+                        echartPic1(result);
+                        echartPic(Chart1, result["title"], "PM2.5", result['xData'], result['yData']);
                         echartPic(Chart2, "六都PM2.5平均值", "PM2.5",
                             Object.keys(result["sixData"]),
                             Object.values(result["sixData"]),
                             "#ff69b4"
                         );
+                        drawCountyPM25("桃園市");
                         // echartSixPm25(result["sixData"])
+                    },
+                    error: () => {
+                        alert("取得資料失敗!");
+                    }
+                }
+
+            )
+        }
+
+        function drawCountyPM25(county) {
+            //ajax
+            $.ajax(
+                {
+                    url: "/county-pm25-json/" + county,
+                    type: "GET",
+                    dataType: "json",
+                    // success:()=>
+                    success: (result) => {
+                        if (!result['success']) {
+                            county = county + "輸入不正確.."
+                        }
+                        console.log(result);
+                        // echartSixPm25(result["sixData"])
+                        echartPic(Chart3, county, "PM2.5",
+                            Object.keys(result["pm25"]),
+                            Object.values(result["pm25"]),
+                            '#ffa500'
+                        )
                     },
                     error: () => {
                         alert("取得資料失敗!");
