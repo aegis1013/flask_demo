@@ -75,13 +75,24 @@ def pm25_chart():
 
 @app.route("/pm25-json")
 def get_pm25_json():
+    six_countys = ["新北市", "臺北市", "桃園市", "臺中市", "臺南市", "高雄市"]
     url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
     df = pd.read_csv(url).dropna()
+
+    six_data = {}
+    for county in six_countys:
+        six_data[county] = round(
+            df.groupby("county").get_group(county)["pm25"].mean(), 2
+        )
+        # six_data.append([county,df.groupby('county').get_group(county)['pm25'].mean()])
+
+    six_data
 
     json_data = {
         "title": "PM2.5數據",
         "xData": df["site"].tolist(),
         "yData": df["pm25"].tolist(),
+        "sixData": six_data,
     }
     # print(json_data)
     return json.dumps(json_data, ensure_ascii=False)
