@@ -12,6 +12,8 @@ books = {1: "Python book", 2: "Java book", 3: "Flask book"}
 
 ascending = True
 df = None
+url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
+countys = None
 
 
 # 首頁 >> @app.route('/')
@@ -75,13 +77,22 @@ def get_now():
 
 @app.route("/pm25-chart")
 def pm25_chart():
-    return render_template("pm25-chart.html")
+    global countys
+    df = pd.read_csv(url).dropna()
+    countys = list(set(df["county"]))
+    lowest = df.sort_values("pm25").iloc[0][["site", "pm25"]].values
+    highest = df.sort_values("pm25").iloc[-1][["site", "pm25"]].values
+
+    # 最高最低輸出到pm25-chart.html
+
+    return render_template(
+        "pm25-chart.html", countys=countys, lowest=lowest, highest=highest
+    )
 
 
 @app.route("/county-pm25-json/<county>")
 def get_county_pm25_json(county):
     global df
-    url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
     pm25 = {}
     message = ""
     nowTime = datetime.now()
@@ -116,10 +127,10 @@ def get_county_pm25_json(county):
 
 @app.route("/pm25-json")
 def get_pm25_json():
-    global df
+    global df, countys
     six_countys = ["新北市", "臺北市", "桃園市", "臺中市", "臺南市", "高雄市"]
-    url = "https://data.moenv.gov.tw/api/v2/aqx_p_02?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=datacreationdate%20desc&format=CSV"
-    df = pd.read_csv(url).dropna()
+    if df is None:
+        df = pd.read_csv(url).dropna()
 
     six_data = {}
     for county in six_countys:
@@ -135,6 +146,7 @@ def get_pm25_json():
         "xData": df["site"].tolist(),
         "yData": df["pm25"].tolist(),
         "sixData": six_data,
+        "county": countys[0],
     }
     # print(json_data)
     return json.dumps(json_data, ensure_ascii=False)
@@ -174,11 +186,14 @@ def get_pm25():
 
         columns = df.columns.tolist()
         values = df.values.tolist()
+        lowest = df.sort_values("pm25").iloc[0][["site", "pm25"]].values
+        highest = df.sort_values("pm25").iloc[-1][["site", "pm25"]].values
         # lowest = df.sort_values("pm25").iloc[0]["site", "pm25"].values
         # highest = df.sort_values("pm25").iloc[-1]["site", "pm25"].values
         # pm25 \\\65列 最高:{{highest[0]}} <span class="highest">{{highest[1]}}</span>
         # 最低:{{lowest[0]}} <span class="lowest">{{lowest[1]}}</span>
         print("取得資料成功!")
+        message = "取得資料成功!"
     except Exception as e:
         print(e)
         message = "取得pm2.5資料失敗，請稍後再試..."

@@ -11,16 +11,33 @@
 
 <body>
     <h1>PM2.5數據圖</h1>
+    最高:{{highest[0]}} <span class="highest">{{highest[1]}}</span>
+    最低:{{lowest[0]}} <span class="lowest">{{lowest[1]}}</span>
+    <hr>
     <div id="main" style="width: 600px;height:400px; background-color: rgb(255, 251, 31);"></div>
     <div id="six-county" style="width: 600px;height:400px; background-color: rgb(110, 240, 245);"></div>
+    <select name="selectCounty" id="selectCounty">
+        {% for county in countys %}
+        <option value="{{county}}">{{county}}</option>
+        {% endfor %}
+    </select>
+
     <div id="county" style="width: 600px;height:400px; background-color: rgb(102, 243, 121);"></div>
     <!--  使用ajax進行資料取得後繪製 -->
     <script>
-        const Chart1 = echarts.init(document.getElementById('main'))
-        const Chart2 = echarts.init(document.getElementById('six-county'))
-        const Chart3 = echarts.init(document.getElementById('county'))
-        drawPM25();
+        const Chart1 = echarts.init(document.getElementById('main'));
+        const Chart2 = echarts.init(document.getElementById('six-county'));
+        const Chart3 = echarts.init(document.getElementById('county'));
+        const selectCountyEl = document.querySelector('#selectCounty');
 
+        selectCountyEl.addEventListener("change", () => {
+            console.log(selectCountyEl.value);
+            drawCountyPM25(selectCountyEl.value);
+        });
+
+
+        //繪製圖形
+        drawPM25();
 
         function echartPic(chart, title, Label, xData, yData, color = "#00008b") {
             let option = {
@@ -209,7 +226,7 @@
                             Object.values(result["sixData"]),
                             "#ff69b4"
                         );
-                        drawCountyPM25("桃園市");
+                        drawCountyPM25(result["county"]);
                         // echartSixPm25(result["sixData"])
                     },
                     error: () => {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>PM2.5資料</title>
     <!-- ../ 跳出本地目錄  ./ 本地目錄-->
     <link rel="stylesheet" href="../static/css/style.css">
     <!-- <style>
@@ -62,8 +62,8 @@
     <h1 class="title">PM2.5即時資訊</h1>
     <div class="update-time">更新時間:{{now}}<br><span>{{message}}</span></div>
 
-
-
+    最高:{{highest[0]}} <span class="highest">{{highest[1]}}</span>
+    最低:{{lowest[0]}} <span class="lowest">{{lowest[1]}}</span>
 
     <form action="/pm25" method="POST">
         <input type="submit" name="update" value="更新"></input>
